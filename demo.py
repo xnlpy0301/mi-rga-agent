@@ -34,45 +34,42 @@ def apply_custom_css():
                 margin: 0 auto;
             }
 
-            /* 按钮样式 - 使用Streamlit原生按钮 */
-            .stButton > button {
-                display: flex !important;
+            /* 按钮样式 */
+            .feature-btn {
+                display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                background: white !important;
-                border: none !important;
-                border-radius: 16px !important;
-                padding: 25px 15px !important;
-                box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
-                transition: all 0.3s ease !important;
-                height: 180px !important;
+                background: white;
+                border: none;
+                border-radius: 16px;
+                padding: 25px 15px;
+                box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+                transition: all 0.3s ease;
+                height: 180px;
                 text-align: center;
-                width: 100% !important;
+                cursor: pointer;
+                width: 100%;
+                font-size: 24px;
             }
 
-            .stButton > button:hover {
-                transform: translateY(-5px) !important;
-                box-shadow: 0 10px 25px rgba(46, 139, 87, 0.25) !important;
-                background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%) !important;
+            .feature-btn:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(46, 139, 87, 0.25);
+                background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
             }
 
-            .stButton > button > div > p {
-                font-size: 18px !important;
-                font-weight: 600 !important;
-                color: #2c7744 !important;
-                margin-bottom: 8px !important;
+            .feature-btn .title {
+                font-size: 20px;
+                font-weight: 600;
+                color: #2c7744;
+                margin-top: 10px;
             }
 
-            .button-icon {
-                font-size: 48px !important;
-                margin-bottom: 15px !important;
-            }
-
-            .button-desc {
-                font-size: 14px !important;
-                color: #5f7d95 !important;
-                max-width: 90% !important;
+            .feature-btn .desc {
+                font-size: 14px;
+                color: #5f7d95;
+                margin-top: 5px;
             }
 
             /* 页脚样式 */
@@ -154,7 +151,7 @@ def show_home():
         </div>
     """, unsafe_allow_html=True)
 
-    # 使用两列网格布局
+    # 创建两列布局
     col1, col2 = st.columns(2)
 
     # 功能按钮定义
@@ -167,15 +164,11 @@ def show_home():
         {"icon": "🐛", "title": "病虫害监测", "desc": "作物健康与病虫害诊断", "page": "pest"}
     ]
 
-    # 创建功能按钮 - 使用Streamlit原生按钮
+    # 创建功能按钮
     with col1:
-        for feature in features[0::2]:  # 奇数列: 1,3,5
+        for feature in features[0::2]:  # 第一列：第1、3、5个按钮
             if st.button(
-                    f"""
-                <div class='button-icon'>{feature['icon']}</div>
-                <div>{feature['title']}</div>
-                <div class='button-desc'>{feature['desc']}</div>
-                """,
+                    f"{feature['icon']}\n### {feature['title']}\n{feature['desc']}",
                     key=f"btn_{feature['page']}",
                     use_container_width=True
             ):
@@ -183,13 +176,9 @@ def show_home():
                 st.experimental_rerun()
 
     with col2:
-        for feature in features[1::2]:  # 偶数列: 2,4,6
+        for feature in features[1::2]:  # 第二列：第2、4、6个按钮
             if st.button(
-                    f"""
-                <div class='button-icon'>{feature['icon']}</div>
-                <div>{feature['title']}</div>
-                <div class='button-desc'>{feature['desc']}</div>
-                """,
+                    f"{feature['icon']}\n### {feature['title']}\n{feature['desc']}",
                     key=f"btn_{feature['page']}",
                     use_container_width=True
             ):
