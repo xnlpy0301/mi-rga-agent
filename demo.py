@@ -2,7 +2,7 @@ import os
 
 import streamlit as st
 
-from LLM_service import Config, StreamlitLogger, VectorStoreManager, DocumentProcessor, RAGLLM, LLM
+from LLM_service import Config,  VectorStoreManager, DocumentProcessor, RAGLLM, LLM
 from function_pages import video_surveillance_page, soil_monitoring_page, weather_monitoring_page, pest_health_page, \
     document_qa_page,current_qa_page
 
@@ -36,24 +36,24 @@ def main():
     apply_custom_css()
     # 初始化配置和日志
     config = Config()
-    logger = StreamlitLogger()
+
 
     os.makedirs(config.data_dir, exist_ok=True)
 
     if 'vs_manager' not in st.session_state:
-        vs_manager = VectorStoreManager(config, logger)
+        vs_manager = VectorStoreManager(config)
         st.session_state.vs_manager = vs_manager
 
         if vs_manager.is_empty():
             logger.info("向量数据库为空，开始加载初始文档...")
-            processor = DocumentProcessor(config, logger)
+            processor = DocumentProcessor(config)
             documents = processor.load_and_split_documents()
             vs_manager.populate_collection(documents)
 
     if 'rag_system' not in st.session_state:
-        st.session_state.rag_system = RAGLLM(config, logger, st.session_state.vs_manager)
+        st.session_state.rag_system = RAGLLM(config, st.session_state.vs_manager)
     if 'current_llm' not in st.session_state:
-        st.session_state.current_llm = LLM(config, logger)
+        st.session_state.current_llm = LLM(config)
 
     st.set_page_config(page_title="农业智能系统", page_icon="🌾", layout="centered")
 
@@ -111,4 +111,5 @@ def show_home():
 
 
 if __name__ == "__main__":
+    st.set_page_config(layout="wide")
     main()
