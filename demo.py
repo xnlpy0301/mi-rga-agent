@@ -142,19 +142,79 @@ def main():
         st.session_state.prev_page = st.session_state.page
         st.rerun()
 
-def show_home():
-    st.markdown('<div class="header"><h1>🌾 米农智家IoT一站式解决方案</h1><p>科技助力现代农业，智能管理提高效率</p></div>',
-                unsafe_allow_html=True)
 
+def show_home():
     st.markdown("""
-        <div style="max-width: 900px; margin: 0 auto 2rem auto; text-align: center;">
-            <p style="font-size: 1.1rem; color: #4a6b7c;">
-                覆盖农场全场景智能管理，从环境监测到作物健康，一站式解决方案
-            </p>
-        </div>
+        <style>
+        /* 顶部横幅 */
+        .header-banner{
+            text-align:center;
+            padding:2rem 1rem;
+            background:linear-gradient(90deg,#2c7744,#5aaf70);
+            color:white;
+            border-radius:0 0 24px 24px;
+            margin-bottom:2.5rem;
+            box-shadow:0 4px 20px rgba(0,0,0,.15);
+        }
+        .header-banner h1{margin:0;font-size:2rem;}
+        .header-banner p{margin:.5rem 0 0;font-size:1.1rem;opacity:.9;}
+
+        /* 卡片网格 */
+        .feat-grid{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:24px;
+            max-width:900px;
+            margin:0 auto 2rem;
+        }
+        @media(max-width:600px){
+            .feat-grid{grid-template-columns:1fr;}
+        }
+
+        /* 卡片本体 */
+        .feat-card{
+            background:#fff;
+            border-radius:18px;
+            padding:32px 20px;
+            text-align:center;
+            box-shadow:0 8px 24px rgba(0,0,0,.08);
+            transition:.3s;
+            cursor:pointer;
+            text-decoration:none;
+            color:inherit;
+            display:block;
+        }
+        .feat-card:hover{
+            transform:translateY(-6px);
+            box-shadow:0 12px 32px rgba(46,139,87,.25);
+            background:linear-gradient(135deg,#fff 0%,#f0fff4 100%);
+        }
+        .feat-card .icon{font-size:48px;margin-bottom:12px;}
+        .feat-card .title{font-size:20px;font-weight:600;color:#2c7744;margin-bottom:6px;}
+        .feat-card .desc{font-size:14px;color:#5f7d95;}
+
+        /* 页脚 */
+        .footer{
+            text-align:center;
+            padding:1.5rem 0;
+            font-size:.9rem;
+            color:#6c757d;
+            border-top:1px solid #eaeaea;
+            margin-top:2rem;
+        }
+        </style>
     """, unsafe_allow_html=True)
 
-    # 功能按钮定义
+    # 顶部标题
+    st.markdown(
+        '<div class="header-banner">'
+        '<h1>🌾 米农智家IoT一站式解决方案</h1>'
+        '<p>科技助力现代农业，智能管理提高效率</p>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    # 功能列表
     features = [
         {"icon": "📄", "title": "农业百科助手", "desc": "农业知识库智能查询", "page": "document_qa"},
         {"icon": "🕒", "title": "实时农场助手", "desc": "即时解答农业生产问题", "page": "current_qa"},
@@ -164,32 +224,30 @@ def show_home():
         {"icon": "🐛", "title": "病虫害监测", "desc": "作物健康与病虫害诊断", "page": "pest"}
     ]
 
-    # 使用Streamlit原生按钮机制
-    st.markdown('<div class="button-grid">', unsafe_allow_html=True)
-    cols = st.columns(2)  # 创建2列网格
+    # 生成卡片
+    cards_html = '<div class="feat-grid">'
+    for f in features:
+        cards_html += f"""
+        <a class="feat-card" href="?page={f['page']}">
+            <div class="icon">{f['icon']}</div>
+            <div class="title">{f['title']}</div>
+            <div class="desc">{f['desc']}</div>
+        </a>
+        """
+    cards_html += '</div>'
+    st.markdown(cards_html, unsafe_allow_html=True)
 
-    for idx, feature in enumerate(features):
-        with cols[idx % 2]:  # 交替放入两列
-            # 使用Streamlit按钮并添加自定义样式
-            if st.button(
-                    f"""
-                {feature['icon']}
-                    {feature['desc']}
-                """,
-                    key=f"btn_{feature['page']}",
-                    use_container_width=True
-            ):
-                # 按钮点击时更新页面状态
-                st.session_state.page = feature['page']
+    # 页脚
+    st.markdown(
+        '<div class="footer">米家智慧农业系统 © 2025 | 科技赋能农业，助力乡村振兴</div>',
+        unsafe_allow_html=True
+    )
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # 添加页脚
-    st.markdown("""
-        <div class="footer">
-            <p>智慧农业系统 © 2025 | 科技赋能农业，助力乡村振兴</p>
-        </div>
-    """, unsafe_allow_html=True)
+    # 监听 URL 参数并跳转 (仅需一次)
+    params = st.query_params
+    if "page" in params and params["page"] != st.session_state.page:
+        st.session_state.page = params["page"]
+        st.rerun()
 
 if __name__ == "__main__":
     main()
