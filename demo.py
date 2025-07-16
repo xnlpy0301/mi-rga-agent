@@ -60,6 +60,17 @@ def apply_custom_css():
                 color: #5f7d95;
                 max-width: 90%;
             }
+            /* 隐藏实际按钮但保持功能 */
+            .stButton button {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                opacity: 0;
+                z-index: 10;
+            }
+
             /* 按钮容器 */
             .button-grid {
                 display: grid;
@@ -117,18 +128,25 @@ def apply_custom_css():
     """, unsafe_allow_html=True)
 
 def display_custom_buttons(features):
-    st.markdown('<div class="button-grid">', unsafe_allow_html=True)
+    # 使用Streamlit的原生交互组件
     cols = st.columns(2)  # 创建两列布局
     for idx, feature in enumerate(features):
         with cols[idx % 2]:  # 每列交替放置按钮
-            st.markdown(f"""
-                <button class="custom-feature-button" onclick="window.location.href='{feature['page']}';">
+            # 创建一个容器，应用自定义样式
+            container = st.container()
+            # 在容器中添加样式化的按钮外观
+            container.markdown(f"""
+                <div class="custom-feature-button">
                     <div class="icon">{feature['icon']}</div>
                     <div class="title">{feature['title']}</div>
                     <div class="desc">{feature['desc']}</div>
-                </button>
+                </div>
             """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+            # 添加一个透明的按钮覆盖在样式上，处理点击事件
+            if container.button("", key=f"btn_{feature['page']}"):
+                st.session_state.page = feature['page']
+                st.rerun()
+
 
 
 
