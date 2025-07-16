@@ -1,5 +1,7 @@
 import logging
 import os
+import time
+import uuid
 from datetime import datetime
 
 import streamlit as st
@@ -24,16 +26,52 @@ class Config:
         self.llm_model = "deepseek-chat"
 
 
+
+
+
 class StreamlitLogger:
     def __init__(self, max_lines=100):
-        # 初始化日志存储（最多保留max_lines行）
+        # 初始化日志存储
         if 'log_content' not in st.session_state:
             st.session_state.log_content = []
+
+        # 生成唯一ID用于日志组件
+        if 'logger_id' not in st.session_state:
+            st.session_state.logger_id = str(uuid.uuid4())
+
         self.max_lines = max_lines
+        self.last_update = 0
+        self.initialized = False
+
+    def initialize_display(self):
+        """初始化日志显示区域，只执行一次"""
+        if not self.initialized:
+            # 创建日志显示区域
+            with st.expander("应用日志", expanded=False):
+                # 创建文本区域和清空按钮
+                st.text_area(
+                    label="日志内容",
+                    value="",
+                    height=300,
+                    key=f"log_display_{st.session_state.logger_id}",
+                    label_visibility="collapsed"
+                )
+                st.button(
+                    "清空日志",
+                    key=f"clear_logs_{st.session_state.logger_id}",
+                    on_click=self.clear_logs
+                )
+            self.initialized = True
 
     def _log(self, level, message):
-        # 添加时间戳和日志级别
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        try:
+            # 获取时间戳
+            timestamp = datetime.now().strftime("%H:%M:%S")
+        except Exception as e:
+            # 如果获取时间失败，使用备用方案
+            timestamp = time.strftime("%H:%M:%S")
+            logging.warning(f"时间戳获取失败: {str(e)}")
+
         log_entry = f"[{timestamp}] [{level}] {message}"
 
         # 添加到日志存储
@@ -43,35 +81,43 @@ class StreamlitLogger:
         if len(st.session_state.log_content) > self.max_lines:
             st.session_state.log_content.pop(0)
 
-        # 更新日志显示区域
+        # 确保显示区域已初始化
+        if not self.initialized:
+            self.initialize_display()
+
+        # 更新日志显示
         self._update_log_display()
 
-        # 同时记录到Python日志系统
+        # 记录到Python日志系统
         getattr(logging, level.lower())(message)
 
     def _update_log_display(self):
-        # 在可折叠区域显示日志
-        with st.expander("应用日志", expanded=False):
-            # 创建可滚动的文本框
+        try:
+            # 更新文本区域内容
             log_text = "\n".join(st.session_state.log_content)
-            st.text_area(
-                label="日志内容",
-                value=log_text,
-                height=300,
-                key="log_display",
-                label_visibility="collapsed"
-            )
+            st.session_state[f"log_display_{st.session_state.logger_id}"] = log_text
+        except Exception as e:
+            # 如果UI更新失败，记录错误但继续运行
+            logging.error(f"日志显示更新失败: {str(e)}")
+            # 回退到侧边栏显示
+            st.sidebar.warning("日志显示异常，请查看控制台日志")
 
-            # 添加清空按钮
-            if st.button("清空日志"):
-                st.session_state.log_content = []
-                st.experimental_rerun()
+    def clear_logs(self):
+        """清空日志的回调函数"""
+        st.session_state.log_content = []
+        self._update_log_display()
 
     def info(self, message):
         self._log("INFO", message)
 
     def error(self, message):
         self._log("ERROR", message)
+
+    def warn(self, message):
+        self._log("WARN", message)
+
+    def debug(self, message):
+        self._log("DEBUG", message)
 
 
 # 提示模板保持不变
