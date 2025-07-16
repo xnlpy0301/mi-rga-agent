@@ -132,31 +132,60 @@ def apply_custom_css():
 
 
 def display_custom_buttons(features):
-    # 使用Streamlit的原生交互组件
-    cols = st.columns(2)  # 创建两列布局
+    # 添加浅蓝色按钮样式（只需一次）
+    st.markdown("""
+    <style>
+        /* 增大标题字体 */
+        h3 {
+            font-size: 1.5rem !important;
+        }
+
+        /* 浅蓝色按钮 */
+        div.stButton > button:first-child {
+            background-color: #e6f7ff !important;
+            border-color: #91d5ff !important;
+            color: #1890ff !important;
+        }
+
+        /* 鼠标悬停效果 */
+        div.stButton > button:hover {
+            background-color: #bae7ff !important;
+            border-color: #69c0ff !important;
+        }
+
+        /* 卡片圆角效果 */
+        div[data-testid="stVerticalBlock"] > div[style*="border"] {
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    cols = st.columns(2)
     for idx, feature in enumerate(features):
-        with cols[idx % 2]:  # 每列交替放置按钮
-            # 创建一个带特定类的容器，限定透明按钮范围
-            container = st.container()
-            container.markdown('<div class="custom-button-container">', unsafe_allow_html=True)
+        with cols[idx % 2]:
+            with st.container(border=True):
+                # 使用h3标签增大标题
+                st.markdown(
+                    f"<h3 style='margin-bottom: 8px;'>{feature['icon']} {feature['title']}</h3>",
+                    unsafe_allow_html=True
+                )
 
-            # 在容器中添加样式化的按钮外观
-            container.markdown(f"""
-                <div class="custom-feature-button">
-                    <div class="icon">{feature['icon']}</div>
-                    <div class="title">{feature['title']}</div>
-                    <div class="desc">{feature['desc']}</div>
-                </div>
-            """, unsafe_allow_html=True)
+                # 描述文本
+                st.markdown(f"<div style='margin-bottom: 16px;'>{feature['desc']}</div>",
+                            unsafe_allow_html=True)
 
-            # 添加一个透明的按钮覆盖在样式上，处理点击事件
-            if container.button("", key=f"btn_{feature['page']}"):
-                st.session_state.page = feature['page']
-                st.rerun()
+                # 浅蓝色按钮
+                if st.button(
+                        f"立即体验",
+                        key=f"btn_{feature['page']}",
+                        use_container_width=True
+                ):
+                    st.session_state.page = feature['page']
+                    st.rerun()
 
-            container.markdown('</div>', unsafe_allow_html=True)
-
-
+                # 添加底部间距
+                st.write("")
 
 
 def show_home():
@@ -171,12 +200,12 @@ def show_home():
     """, unsafe_allow_html=True)
     # 定义功能按钮
     features = [
-        {"icon": "📄", "title": "农业百科助手", "desc": "农业知识库智能查询", "page": "document_qa"},
-        {"icon": "🕒", "title": "实时农场助手", "desc": "即时解答农业生产问题", "page": "current_qa"},
-        {"icon": "🎥", "title": "视频监控", "desc": "实时查看农田监控画面", "page": "video"},
-        {"icon": "🧪", "title": "土壤监测", "desc": "土壤成分与湿度分析", "page": "soil"},
-        {"icon": "🌦️", "title": "气象监测", "desc": "实时天气与灾害预警", "page": "weather"},
-        {"icon": "🐛", "title": "病虫害监测", "desc": "作物健康与病虫害诊断", "page": "pest"}
+        {"icon": "🌱", "title": "农场智能助手", "desc": "结合实时农场数据提供最优决策建议", "page": "current_qa"},
+        {"icon": "📚", "title": "农业百科助手", "desc": "权威农业知识与技术资料库", "page": "document_qa"},
+        {"icon": "🎥", "title": "农田实况监控", "desc": "高清监控与作物生长状态分析", "page": "video"},
+        {"icon": "🧪", "title": "土壤监测", "desc": "土壤墒情与肥力实时监测", "page": "soil"},
+        {"icon": "🌦️", "title": "气象监测", "desc": "精准天气预警与灾害预防方案", "page": "weather"},
+        {"icon": "🐛", "title": "病虫害监测", "desc": "智能识别与防治方案推荐", "page": "pest"},
     ]
     # 显示功能按钮
     display_custom_buttons(features)
@@ -186,6 +215,7 @@ def show_home():
             <p>米家智慧农业系统 © 2025 | 科技赋能农业，助力乡村振兴</p>
         </div>
     """, unsafe_allow_html=True)
+
 def main():
     apply_custom_css()
     config = Config()
@@ -224,6 +254,7 @@ def main():
         weather_monitoring_page()
     elif st.session_state.page == 'pest':
         pest_health_page()
+
     # 添加页面切换后的重运行
     if 'prev_page' not in st.session_state:
         st.session_state.prev_page = st.session_state.page

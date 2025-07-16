@@ -10,7 +10,7 @@ from LLM_service import DocumentProcessor
 
 
 def document_qa_page(config):
-    st.header("📄 文档智能问答")
+    st.header("📚 农业百科助手")
     st.button("⬅️ 返回主页", on_click=lambda: setattr(st.session_state, 'page', 'home'))
 
     st.subheader("📂 文档管理")
@@ -39,7 +39,7 @@ def document_qa_page(config):
             st.error(f"文档处理失败: {str(e)}")
 
     st.divider()
-    st.subheader("🤖 智能问答")
+    st.subheader("📚 农业百科速查")
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -63,7 +63,7 @@ def document_qa_page(config):
 # ====================== 农业监测系统页面函数 ======================
 
 def video_surveillance_page():
-    st.header("🌾 农田视频监控系统")
+    st.header("🎥 农田实况监控")
     st.info("实时监控农田状态，支持多摄像头切换查看")
     st.button("⬅️ 返回主页", on_click=lambda: setattr(st.session_state, 'page', 'home'))
 
@@ -116,7 +116,7 @@ def video_surveillance_page():
 
 
 def soil_monitoring_page():
-    st.header("🌱 智能土壤监测系统")
+    st.header("🧪 智能土壤监测系统")
     st.info("实时监测土壤各项指标，为精准农业提供数据支持")
     st.button("⬅️ 返回主页", on_click=lambda: setattr(st.session_state, 'page', 'home'))
 
@@ -338,7 +338,7 @@ def pest_health_page():
 
 
 def current_qa_page():
-    st.header("📝 智能农业实时询问助手")
+    st.header("🌱 农场智能助手")
     st.info("此页面汇总各子系统信息，给予农户实时建议")
     st.button("⬅️ 返回主页", on_click=lambda: setattr(st.session_state, 'page', 'home'))
 
@@ -359,7 +359,7 @@ def current_qa_page():
     """
 
     st.divider()
-    st.subheader("🤖 智能问答")
+    st.subheader("🌱 农场智能管理")
 
     if "current_messages" not in st.session_state:
         st.session_state.current_messages = []
