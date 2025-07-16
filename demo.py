@@ -21,6 +21,45 @@ def apply_custom_css():
                 border-radius: 0 0 20px 20px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             }
+            .custom-feature-button {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: white;
+                border: none;
+                border-radius: 16px;
+                padding: 30px 20px; /* 增加按钮内边距 */
+                box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+                transition: all 0.3s ease;
+                height: 220px; /* 增加按钮高度 */
+                text-align: center;
+                cursor: pointer;
+            }
+            /* 鼠标悬浮效果 */
+            .custom-feature-button:hover {
+                transform: translateY(-8px); /* 按钮轻微上升 */
+                box-shadow: 0 12px 30px rgba(46, 139, 87, 0.3); /* 增强阴影效果 */
+                background: linear-gradient(135deg, #ffffff 0%, #e6fde6 100%);
+            }
+            /* 按钮图标 */
+            .custom-feature-button .icon {
+                font-size: 54px; /* 增大图标尺寸 */
+                margin-bottom: 20px;
+            }
+            /* 按钮标题 */
+            .custom-feature-button .title {
+                font-size: 20px; /* 增大标题字体 */
+                font-weight: 600;
+                color: #2c7744;
+                margin-bottom: 10px;
+            }
+            /* 按钮描述 */
+            .custom-feature-button .desc {
+                font-size: 16px; /* 增大描述字体 */
+                color: #5f7d95;
+                max-width: 90%;
+            }
             /* 按钮容器 */
             .button-grid {
                 display: grid;
@@ -38,34 +77,30 @@ def apply_custom_css():
                 background: white;
                 border: none;
                 border-radius: 16px;
-                padding: 30px 20px; /* 增加按钮内边距 */
+                padding: 25px 15px;
                 box-shadow: 0 6px 16px rgba(0,0,0,0.08);
                 transition: all 0.3s ease;
-                height: 220px; /* 增加按钮高度 */
+                height: 180px;
                 text-align: center;
                 cursor: pointer;
             }
-            /* 鼠标悬浮效果 */
             .feature-button:hover {
-                transform: translateY(-8px); /* 按钮轻微上升 */
-                box-shadow: 0 12px 30px rgba(46, 139, 87, 0.3); /* 增强阴影效果 */
-                background: linear-gradient(135deg, #ffffff 0%, #e6fde6 100%);
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(46, 139, 87, 0.25);
+                background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
             }
-            /* 按钮图标 */
             .feature-button .icon {
-                font-size: 54px; /* 增大图标尺寸 */
-                margin-bottom: 20px;
+                font-size: 48px;
+                margin-bottom: 15px;
             }
-            /* 按钮标题 */
             .feature-button .title {
-                font-size: 20px; /* 增大标题字体 */
+                font-size: 18px;
                 font-weight: 600;
                 color: #2c7744;
-                margin-bottom: 10px;
+                margin-bottom: 8px;
             }
-            /* 按钮描述 */
             .feature-button .desc {
-                font-size: 16px; /* 增大描述字体 */
+                font-size: 14px;
                 color: #5f7d95;
                 max-width: 90%;
             }
@@ -80,25 +115,23 @@ def apply_custom_css():
             }
         </style>
     """, unsafe_allow_html=True)
-def display_buttons(features):
+
+def display_custom_buttons(features):
     st.markdown('<div class="button-grid">', unsafe_allow_html=True)
     cols = st.columns(2)  # 创建两列布局
     for idx, feature in enumerate(features):
         with cols[idx % 2]:  # 每列交替放置按钮
-            if st.button(
-                label=f"""
-                    <div class="feature-button">
-                        <div class="icon">{feature['icon']}</div>
-                        <div class="title">{feature['title']}</div>
-                        <div class="desc">{feature['desc']}</div>
-                    </div>
-                """,
-                key=f"btn_{feature['page']}",
-                use_container_width=True
-            ):
-                st.session_state.page = feature['page']
-                st.success(f"正在切换到：{feature['title']} 页面...")
+            st.markdown(f"""
+                <button class="custom-feature-button" onclick="window.location.href='{feature['page']}';">
+                    <div class="icon">{feature['icon']}</div>
+                    <div class="title">{feature['title']}</div>
+                    <div class="desc">{feature['desc']}</div>
+                </button>
+            """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
+
+
+
 def show_home():
     st.markdown('<div class="header"><h1>🌾 米农智家IoT一站式解决方案</h1><p>科技助力现代农业，智能管理提高效率</p></div>',
                 unsafe_allow_html=True)
@@ -119,7 +152,7 @@ def show_home():
         {"icon": "🐛", "title": "病虫害监测", "desc": "作物健康与病虫害诊断", "page": "pest"}
     ]
     # 显示功能按钮
-    display_buttons(features)
+    display_custom_buttons(features)
     # 添加页脚
     st.markdown("""
         <div class="footer">
@@ -170,5 +203,7 @@ def main():
     if st.session_state.prev_page != st.session_state.page:
         st.session_state.prev_page = st.session_state.page
         st.rerun()
+
+
 if __name__ == "__main__":
     main()
