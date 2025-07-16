@@ -99,8 +99,6 @@ class StreamlitLogger:
         except Exception as e:
             # 如果UI更新失败，记录错误但继续运行
             logging.error(f"日志显示更新失败: {str(e)}")
-            # 回退到侧边栏显示
-            st.sidebar.warning("日志显示异常，请查看控制台日志")
 
     def clear_logs(self):
         """清空日志的回调函数"""
