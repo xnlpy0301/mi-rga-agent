@@ -12,7 +12,6 @@ def apply_custom_css():
             .stApp {
                 background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
                 background-attachment: fixed;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
             /* 标题样式 */
             .header {
@@ -24,12 +23,6 @@ def apply_custom_css():
                 border-radius: 0 0 20px 20px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             }
-            /* 功能按钮容器 - 修复重叠问题 */
-            .custom-button-container {
-                position: relative;
-                width: 100%;
-                margin-bottom: 20px;
-            }
             .custom-feature-button {
                 display: flex;
                 flex-direction: column;
@@ -38,44 +31,39 @@ def apply_custom_css():
                 background: white;
                 border: none;
                 border-radius: 16px;
-                padding: 30px 20px;
+                padding: 30px 20px; /* 增加按钮内边距 */
                 box-shadow: 0 6px 16px rgba(0,0,0,0.08);
                 transition: all 0.3s ease;
-                height: 220px;
+                height: 220px; /* 增加按钮高度 */
                 text-align: center;
                 cursor: pointer;
-                position: relative;
-                overflow: hidden; /* 防止内容溢出 */
+                position: relative; /* 添加相对定位 */
             }
             /* 鼠标悬浮效果 */
             .custom-feature-button:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 12px 30px rgba(46, 139, 87, 0.3);
+                transform: translateY(-8px); /* 按钮轻微上升 */
+                box-shadow: 0 12px 30px rgba(46, 139, 87, 0.3); /* 增强阴影效果 */
                 background: linear-gradient(135deg, #ffffff 0%, #e6fde6 100%);
             }
             /* 按钮图标 */
             .custom-feature-button .icon {
-                font-size: 54px;
-                margin-bottom: 15px; /* 减少间距 */
-                color: #2c7744;
+                font-size: 54px; /* 增大图标尺寸 */
+                margin-bottom: 20px;
             }
             /* 按钮标题 */
             .custom-feature-button .title {
-                font-size: 20px;
+                font-size: 20px; /* 增大标题字体 */
                 font-weight: 600;
                 color: #2c7744;
-                margin-bottom: 8px; /* 减少间距 */
-                line-height: 1.3; /* 更好的行高 */
+                margin-bottom: 10px;
             }
             /* 按钮描述 */
             .custom-feature-button .desc {
-                font-size: 16px;
+                font-size: 16px; /* 增大描述字体 */
                 color: #5f7d95;
                 max-width: 90%;
-                line-height: 1.5; /* 更好的行高 */
-                padding: 0 10px; /* 添加内边距 */
             }
-            /* 透明按钮样式 */
+            /* 解决方案1: 只针对功能按钮的透明按钮 */
             .custom-button-container .stButton button {
                 position: absolute;
                 width: 100%;
@@ -90,9 +78,45 @@ def apply_custom_css():
             .button-grid {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 25px; /* 增加间距 */
+                gap: 20px;
                 max-width: 900px;
                 margin: 0 auto;
+            }
+            /* 按钮样式 */
+            .feature-button {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: white;
+                border: none;
+                border-radius: 16px;
+                padding: 25px 15px;
+                box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+                transition: all 0.3s ease;
+                height: 180px;
+                text-align: center;
+                cursor: pointer;
+            }
+            .feature-button:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(46, 139, 87, 0.25);
+                background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+            }
+            .feature-button .icon {
+                font-size: 48px;
+                margin-bottom: 15px;
+            }
+            .feature-button .title {
+                font-size: 18px;
+                font-weight: 600;
+                color: #2c7744;
+                margin-bottom: 8px;
+            }
+            .feature-button .desc {
+                font-size: 14px;
+                color: #5f7d95;
+                max-width: 90%;
             }
             /* 页脚样式 */
             .footer {
@@ -103,34 +127,21 @@ def apply_custom_css():
                 font-size: 0.9rem;
                 border-top: 1px solid #eaeaea;
             }
-
-            /* 响应式调整 */
-            @media (max-width: 768px) {
-                .button-grid {
-                    grid-template-columns: 1fr;
-                }
-                .custom-feature-button {
-                    height: auto;
-                    min-height: 180px;
-                }
-            }
         </style>
     """, unsafe_allow_html=True)
 
 
 def display_custom_buttons(features):
-    # 创建网格容器
-    st.markdown('<div class="button-grid">', unsafe_allow_html=True)
+    # 使用Streamlit的原生交互组件
+    cols = st.columns(2)  # 创建两列布局
+    for idx, feature in enumerate(features):
+        with cols[idx % 2]:  # 每列交替放置按钮
+            # 创建一个带特定类的容器，限定透明按钮范围
+            container = st.container()
+            container.markdown('<div class="custom-button-container">', unsafe_allow_html=True)
 
-    for feature in features:
-        # 为每个按钮创建容器
-        container = st.container()
-        with container:
-            # 添加包裹容器
-            st.markdown('<div class="custom-button-container">', unsafe_allow_html=True)
-
-            # 功能按钮内容
-            st.markdown(f"""
+            # 在容器中添加样式化的按钮外观
+            container.markdown(f"""
                 <div class="custom-feature-button">
                     <div class="icon">{feature['icon']}</div>
                     <div class="title">{feature['title']}</div>
@@ -138,16 +149,13 @@ def display_custom_buttons(features):
                 </div>
             """, unsafe_allow_html=True)
 
-            # 透明按钮
-            if st.button("", key=f"btn_{feature['page']}"):
+            # 添加一个透明的按钮覆盖在样式上，处理点击事件
+            if container.button("", key=f"btn_{feature['page']}"):
                 st.session_state.page = feature['page']
                 st.rerun()
 
-            # 关闭包裹容器
-            st.markdown('</div>', unsafe_allow_html=True)
+            container.markdown('</div>', unsafe_allow_html=True)
 
-    # 关闭网格容器
-    st.markdown('</div>', unsafe_allow_html=True)
 
 
 
