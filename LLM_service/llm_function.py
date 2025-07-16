@@ -89,70 +89,40 @@ class VectorStoreManager:
     def __init__(self, config, logger):
         self.config = config
         self.logger = logger
-        self.embedding_function = self._create_embedding_function()
-        self.vector_store = None
-        self.index_path = f"faiss_index_{self.config.collection_name}"
-        self._initialize_vector_store()
-    def _create_embedding_function(self):
-        # 使用OpenAI嵌入模型替代HuggingFace模型
-        from langchain_openai import OpenAIEmbeddings
-        return OpenAIEmbeddings(
-            model="text-embedding-ada-002",
-            openai_api_key=self.config.llm_api_key,
-            openai_api_base=self.config.llm_base_url
-        )
-    # 其余方法保持不变
-    def _initialize_vector_store(self):
-        try:
-            if os.path.exists(self.index_path):
-                self.vector_store = FAISS.load_local(
-                    self.index_path,
-                    self.embedding_function
-                )
-                self.logger.info(f"加载现有索引: {self.index_path}")
-            else:
-                self.logger.info(f"未找到现有索引，将在添加文档时创建")
-        except Exception as e:
-            self.logger.error(f"初始化向量存储失败: {str(e)}")
-            self.vector_store = None
+        self.documents = []
     def is_empty(self):
-        return self.vector_store is None or len(self.vector_store.index_to_docstore_id) == 0
+        return len(self.documents) == 0
     def reset_collection(self):
-        try:
-            import shutil
-            if os.path.exists(self.index_path):
-                shutil.rmtree(self.index_path)
-                self.logger.info(f"删除索引: {self.index_path}")
-            self.vector_store = None
-        except Exception as e:
-            self.logger.error(f"重置索引失败: {str(e)}")
+        self.documents = []
+        self.logger.info("文档存储已重置")
     def populate_collection(self, documents):
         # 为文档添加文件名前缀
         for doc in documents:
             file_path = doc.metadata["source"]
             file_name = os.path.basename(file_path)
-            doc.page_content = f'{file_name}: {doc.page_content}'
-        if self.vector_store is None:
-            self.vector_store = FAISS.from_documents(
-                documents,
-                self.embedding_function
-            )
-        else:
-            self.vector_store.add_documents(documents)
-        # 保存索引
-        self.vector_store.save_local(self.index_path)
+            content = f'{file_name}: {doc.page_content}'
+            self.documents.append(content)
         self.logger.info(f"已加载 {len(documents)} 个文档片段")
     def query(self, question, n_results=5):
-        if self.vector_store is None:
-            self.logger.error("向量存储为空，无法查询")
+        if not self.documents:
+            self.logger.error("文档存储为空，无法查询")
             return {"documents": [[]], "distances": [[]]}
-        results = self.vector_store.similarity_search_with_score(
-            question,
-            k=n_results
-        )
-        # 转换为与原来类似的格式
-        documents = [doc.page_content for doc, _ in results]
-        distances = [float(score) for _, score in results]
+        # 简单的关键词匹配算法
+        keywords = question.lower().split()
+        scores = []
+        for doc in self.documents:
+            doc_lower = doc.lower()
+            # 计算匹配的关键词数量作为简单的相关性分数
+            score = sum(1 for keyword in keywords if keyword in doc_lower)
+            scores.append((doc, score))
+        # 按分数排序，取前n_results个
+        sorted_docs = sorted(scores, key=lambda x: x[1], reverse=True)[:n_results]
+        # 如果没有匹配项，返回前n_results个文档
+        if all(score == 0 for _, score in sorted_docs) and self.documents:
+            sorted_docs = [(doc, 0) for doc in self.documents[:n_results]]
+        documents = [doc for doc, _ in sorted_docs]
+        # 将分数转换为距离（分数越高，距离越小）
+        distances = [1.0 - min(score/len(keywords), 1.0) for _, score in sorted_docs]
         return {
             "documents": [documents],
             "distances": [distances]

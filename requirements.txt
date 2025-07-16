@@ -7,6 +7,3 @@ langchain-community
 unstructured
 openai
 python-dotenv
-tiktoken
-faiss-cpu
-sentence-transformers  # 如果你使用本地嵌入模型
