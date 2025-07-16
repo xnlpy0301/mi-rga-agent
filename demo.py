@@ -34,9 +34,7 @@ def apply_custom_css():
 
 def main():
     apply_custom_css()
-    # 初始化配置和日志
     config = Config()
-
 
     os.makedirs(config.data_dir, exist_ok=True)
 
@@ -45,7 +43,6 @@ def main():
         st.session_state.vs_manager = vs_manager
 
         if vs_manager.is_empty():
-            logger.info("向量数据库为空，开始加载初始文档...")
             processor = DocumentProcessor(config)
             documents = processor.load_and_split_documents()
             vs_manager.populate_collection(documents)
