@@ -109,7 +109,7 @@ def main():
         st.session_state.current_llm = LLM(config)
 
     st.set_page_config(
-        page_title="农业智能系统",
+        page_title="米农智家IoT一站式解决方案",
         page_icon="🌾",
         layout="centered",
         initial_sidebar_state="collapsed"
@@ -134,9 +134,16 @@ def main():
     elif st.session_state.page == 'pest':
         pest_health_page()
 
+    # 添加页面切换后的重运行
+    if 'prev_page' not in st.session_state:
+        st.session_state.prev_page = st.session_state.page
+
+    if st.session_state.prev_page != st.session_state.page:
+        st.session_state.prev_page = st.session_state.page
+        st.rerun()
 
 def show_home():
-    st.markdown('<div class="header"><h1>🌾 智慧农业智能系统</h1><p>科技助力现代农业，智能管理提高效率</p></div>',
+    st.markdown('<div class="header"><h1>🌾 米农智家IoT一站式解决方案</h1><p>科技助力现代农业，智能管理提高效率</p></div>',
                 unsafe_allow_html=True)
 
     st.markdown("""
@@ -147,42 +154,36 @@ def show_home():
         </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="button-grid">', unsafe_allow_html=True)
-
     # 功能按钮定义
     features = [
-        {"icon": "📄", "title": "文档问答", "desc": "农业知识库智能查询", "page": "document_qa"},
-        {"icon": "🕒", "title": "实时农业助手", "desc": "即时解答农业生产问题", "page": "current_qa"},
+        {"icon": "📄", "title": "农业百科助手", "desc": "农业知识库智能查询", "page": "document_qa"},
+        {"icon": "🕒", "title": "实时农场助手", "desc": "即时解答农业生产问题", "page": "current_qa"},
         {"icon": "🎥", "title": "视频监控", "desc": "实时查看农田监控画面", "page": "video"},
         {"icon": "🧪", "title": "土壤监测", "desc": "土壤成分与湿度分析", "page": "soil"},
         {"icon": "🌦️", "title": "气象监测", "desc": "实时天气与灾害预警", "page": "weather"},
         {"icon": "🐛", "title": "病虫害监测", "desc": "作物健康与病虫害诊断", "page": "pest"}
     ]
 
-    # 创建功能按钮
-    for feature in features:
-        with st.container():
-            if st.markdown(f"""
-                <div class="feature-button" onclick="window.streamlit:componentEvent('change_page', '{{'{feature["page"]}'}}')">
-                    <div class="icon">{feature["icon"]}</div>
-                    <div class="title">{feature["title"]}</div>
-                    <div class="desc">{feature["desc"]}</div>
+    # 使用Streamlit原生按钮机制
+    st.markdown('<div class="button-grid">', unsafe_allow_html=True)
+    cols = st.columns(2)  # 创建2列网格
+
+    for idx, feature in enumerate(features):
+        with cols[idx % 2]:  # 交替放入两列
+            # 使用Streamlit按钮并添加自定义样式
+            if st.button(
+                    f"""
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">{feature['icon']}</div>
+                    <div style="font-size: 18px; font-weight: 600; color: #2c7744; margin-bottom: 8px;">{feature['title']}</div>
+                    <div style="font-size: 14px; color: #5f7d95;">{feature['desc']}</div>
                 </div>
-            """, unsafe_allow_html=True):
-                # 添加JavaScript处理
-                st.write(f"""
-                    <script>
-                        window.addEventListener('load', function() {{
-                            const buttons = document.querySelectorAll('.feature-button');
-                            buttons.forEach(button => {{
-                                button.addEventListener('click', function() {{
-                                    const page = this.getAttribute('onclick').match(/'([^']+)'/)[1];
-                                    window.streamlit:componentEvent('change_page', page);
-                                }});
-                            }});
-                        }});
-                    </script>
-                """, unsafe_allow_html=True)
+                """,
+                    key=f"btn_{feature['page']}",
+                    use_container_width=True
+            ):
+                # 按钮点击时更新页面状态
+                st.session_state.page = feature['page']
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -192,7 +193,6 @@ def show_home():
             <p>智慧农业系统 © 2025 | 科技赋能农业，助力乡村振兴</p>
         </div>
     """, unsafe_allow_html=True)
-
 
 if __name__ == "__main__":
     main()
