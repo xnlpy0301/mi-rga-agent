@@ -4,7 +4,8 @@ numpy
 pandas
 plotly
 # 数据库和向量存储
-chromadb
+chromadb==0.4.18  
+
 # LangChain相关
 langchain
 langchain-community
