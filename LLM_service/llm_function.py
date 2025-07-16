@@ -25,6 +25,57 @@ class Config:
         self.llm_base_url = "https://api.deepseek.com"
         self.llm_model = "deepseek-chat"
 
+
+class StreamlitLogger:
+    def __init__(self, max_lines=100):
+        # 初始化日志存储（最多保留max_lines行）
+        if 'log_content' not in st.session_state:
+            st.session_state.log_content = []
+        self.max_lines = max_lines
+
+    def _log(self, level, message):
+        # 添加时间戳和日志级别
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        log_entry = f"[{timestamp}] [{level}] {message}"
+
+        # 添加到日志存储
+        st.session_state.log_content.append(log_entry)
+
+        # 限制日志行数
+        if len(st.session_state.log_content) > self.max_lines:
+            st.session_state.log_content.pop(0)
+
+        # 更新日志显示区域
+        self._update_log_display()
+
+        # 同时记录到Python日志系统
+        getattr(logging, level.lower())(message)
+
+    def _update_log_display(self):
+        # 在可折叠区域显示日志
+        with st.expander("应用日志", expanded=False):
+            # 创建可滚动的文本框
+            log_text = "\n".join(st.session_state.log_content)
+            st.text_area(
+                label="日志内容",
+                value=log_text,
+                height=300,
+                key="log_display",
+                label_visibility="collapsed"
+            )
+
+            # 添加清空按钮
+            if st.button("清空日志"):
+                st.session_state.log_content = []
+                st.experimental_rerun()
+
+    def info(self, message):
+        self._log("INFO", message)
+
+    def error(self, message):
+        self._log("ERROR", message)
+
+
 # 提示模板保持不变
 PROMPT_TEMPLATE = """
 你是一个安全助手，需要根据提供的密码文档信息回答问题。请严格遵守以下规则：
@@ -77,7 +128,8 @@ class DocumentProcessor:
         except Exception as e:
             self.logger.error(f"文档处理失败: {str(e)}")
             raise
-# 修改VectorStoreManager类
+
+
 class VectorStoreManager:
     def __init__(self, config, logger):
         self.config = config
