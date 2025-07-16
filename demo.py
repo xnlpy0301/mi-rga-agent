@@ -60,6 +60,17 @@ def apply_custom_css():
                 color: #5f7d95;
                 max-width: 90%;
             }
+            /* 隐藏实际按钮但保持功能 */
+            .stButton button {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                opacity: 0;
+                z-index: 10;
+            }
+
             /* 按钮容器 */
             .button-grid {
                 display: grid;
@@ -135,6 +146,8 @@ def display_custom_buttons(features):
             if container.button("", key=f"btn_{feature['page']}"):
                 st.session_state.page = feature['page']
                 st.rerun()
+
+
 
 
 def show_home():
