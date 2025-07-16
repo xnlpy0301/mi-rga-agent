@@ -1,18 +1,11 @@
-# 基础依赖
 streamlit
 numpy
 pandas
 plotly
-# 数据库和向量存储
-chromadb==0.4.18  
-
-# LangChain相关
+chromadb==0.4.6
 langchain
 langchain-community
-# 文档处理
 unstructured
-# OpenAI API
 openai
-# 其他可能需要的依赖
 python-dotenv
 tiktoken
