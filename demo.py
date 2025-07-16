@@ -173,11 +173,8 @@ def show_home():
             # 使用Streamlit按钮并添加自定义样式
             if st.button(
                     f"""
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <div style="font-size: 48px; margin-bottom: 15px;">{feature['icon']}</div>
-                    <div style="font-size: 18px; font-weight: 600; color: #2c7744; margin-bottom: 8px;">{feature['title']}</div>
-                    <div style="font-size: 14px; color: #5f7d95;">{feature['desc']}</div>
-                </div>
+                {feature['icon']}
+                    {feature['desc']}
                 """,
                     key=f"btn_{feature['page']}",
                     use_container_width=True
