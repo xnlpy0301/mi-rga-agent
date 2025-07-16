@@ -1,15 +1,13 @@
 import logging
 import os
-# 移除 ChromaDB 导入
-# import chromadb
-# from chromadb.errors import NotFoundError
-# from chromadb.utils import embedding_functions
+from datetime import datetime
+
+import streamlit as st
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import UnstructuredFileLoader
-from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from openai import OpenAI
-import streamlit as st
+
+
 # 配置类保持不变
 class Config:
     def __init__(self):
