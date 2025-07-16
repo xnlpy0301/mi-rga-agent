@@ -3,6 +3,8 @@ import streamlit as st
 from LLM_service import Config, VectorStoreManager, DocumentProcessor, RAGLLM, LLM
 from function_pages import video_surveillance_page, soil_monitoring_page, weather_monitoring_page, pest_health_page, \
     document_qa_page, current_qa_page
+
+
 def apply_custom_css():
     st.markdown("""
         <style>
@@ -35,6 +37,7 @@ def apply_custom_css():
                 height: 220px; /* 增加按钮高度 */
                 text-align: center;
                 cursor: pointer;
+                position: relative; /* 添加相对定位 */
             }
             /* 鼠标悬浮效果 */
             .custom-feature-button:hover {
@@ -60,8 +63,8 @@ def apply_custom_css():
                 color: #5f7d95;
                 max-width: 90%;
             }
-            /* 隐藏实际按钮但保持功能 */
-            .stButton button {
+            /* 解决方案1: 只针对功能按钮的透明按钮 */
+            .custom-button-container .stButton button {
                 position: absolute;
                 width: 100%;
                 height: 100%;
@@ -127,13 +130,16 @@ def apply_custom_css():
         </style>
     """, unsafe_allow_html=True)
 
+
 def display_custom_buttons(features):
     # 使用Streamlit的原生交互组件
     cols = st.columns(2)  # 创建两列布局
     for idx, feature in enumerate(features):
         with cols[idx % 2]:  # 每列交替放置按钮
-            # 创建一个容器，应用自定义样式
+            # 创建一个带特定类的容器，限定透明按钮范围
             container = st.container()
+            container.markdown('<div class="custom-button-container">', unsafe_allow_html=True)
+
             # 在容器中添加样式化的按钮外观
             container.markdown(f"""
                 <div class="custom-feature-button">
@@ -142,10 +148,13 @@ def display_custom_buttons(features):
                     <div class="desc">{feature['desc']}</div>
                 </div>
             """, unsafe_allow_html=True)
+
             # 添加一个透明的按钮覆盖在样式上，处理点击事件
             if container.button("", key=f"btn_{feature['page']}"):
                 st.session_state.page = feature['page']
                 st.rerun()
+
+            container.markdown('</div>', unsafe_allow_html=True)
 
 
 
