@@ -38,30 +38,34 @@ def apply_custom_css():
                 background: white;
                 border: none;
                 border-radius: 16px;
-                padding: 25px 15px;
+                padding: 30px 20px; /* 增加按钮内边距 */
                 box-shadow: 0 6px 16px rgba(0,0,0,0.08);
                 transition: all 0.3s ease;
-                height: 180px;
+                height: 220px; /* 增加按钮高度 */
                 text-align: center;
                 cursor: pointer;
             }
+            /* 鼠标悬浮效果 */
             .feature-button:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(46, 139, 87, 0.25);
-                background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+                transform: translateY(-8px); /* 按钮轻微上升 */
+                box-shadow: 0 12px 30px rgba(46, 139, 87, 0.3); /* 增强阴影效果 */
+                background: linear-gradient(135deg, #ffffff 0%, #e6fde6 100%);
             }
+            /* 按钮图标 */
             .feature-button .icon {
-                font-size: 48px;
-                margin-bottom: 15px;
+                font-size: 54px; /* 增大图标尺寸 */
+                margin-bottom: 20px;
             }
+            /* 按钮标题 */
             .feature-button .title {
-                font-size: 18px;
+                font-size: 20px; /* 增大标题字体 */
                 font-weight: 600;
                 color: #2c7744;
-                margin-bottom: 8px;
+                margin-bottom: 10px;
             }
+            /* 按钮描述 */
             .feature-button .desc {
-                font-size: 14px;
+                font-size: 16px; /* 增大描述字体 */
                 color: #5f7d95;
                 max-width: 90%;
             }
@@ -82,7 +86,13 @@ def display_buttons(features):
     for idx, feature in enumerate(features):
         with cols[idx % 2]:  # 每列交替放置按钮
             if st.button(
-                label=f"{feature['icon']} {feature['title']}\n{feature['desc']}",
+                label=f"""
+                    <div class="feature-button">
+                        <div class="icon">{feature['icon']}</div>
+                        <div class="title">{feature['title']}</div>
+                        <div class="desc">{feature['desc']}</div>
+                    </div>
+                """,
                 key=f"btn_{feature['page']}",
                 use_container_width=True
             ):
