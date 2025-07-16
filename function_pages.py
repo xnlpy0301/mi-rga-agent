@@ -9,7 +9,7 @@ import streamlit as st
 from LLM_service import DocumentProcessor
 
 
-def document_qa_page(config, logger):
+def document_qa_page(config):
     st.header("📄 文档智能问答")
     st.button("⬅️ 返回主页", on_click=lambda: setattr(st.session_state, 'page', 'home'))
 
@@ -25,18 +25,17 @@ def document_qa_page(config, logger):
             save_path = os.path.join(config.data_dir, uploaded_file.name)
             with open(save_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
-            logger.info(f"保存文件: {save_path}")
+
         st.success("文件上传成功！")
 
     if st.button("🔄 重新加载文档"):
         try:
-            processor = DocumentProcessor(config, logger)
+            processor = DocumentProcessor(config)
             documents = processor.load_and_split_documents()
             st.session_state.vs_manager.reset_collection()
             st.session_state.vs_manager.populate_collection(documents)
             st.success(f"文档重新加载成功，共处理 {len(documents)} 个文档片段。")
         except Exception as e:
-            logger.error(f"文档处理失败: {str(e)}")
             st.error(f"文档处理失败: {str(e)}")
 
     st.divider()
