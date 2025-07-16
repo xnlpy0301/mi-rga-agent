@@ -105,7 +105,7 @@ def show_home():
         if st.button("🌦️ 气象监测"):
             st.session_state.page = 'weather'
     with col6:
-        if st.button("🐛 病虫害检测"):
+        if st.button("🐛 病虫害监测"):
             st.session_state.page = 'pest'
 
 
