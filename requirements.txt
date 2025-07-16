@@ -1,11 +1,12 @@
 streamlit
-numpy==1.24.0
+numpy
 pandas
 plotly
-chromadb==0.4.6
 langchain
 langchain-community
 unstructured
 openai
 python-dotenv
 tiktoken
+faiss-cpu
+sentence-transformers  # 如果你使用本地嵌入模型
