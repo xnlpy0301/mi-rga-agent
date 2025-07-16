@@ -24,14 +24,7 @@ class Config:
         self.llm_api_key = "sk-9711b868641243f1bd50983d7da7f3b1"
         self.llm_base_url = "https://api.deepseek.com"
         self.llm_model = "deepseek-chat"
-# 日志类保持不变
-class StreamlitLogger:
-    def info(self, message):
-        st.sidebar.info(message)
-        logging.info(message)
-    def error(self, message):
-        st.sidebar.error(message)
-        logging.error(message)
+
 # 提示模板保持不变
 PROMPT_TEMPLATE = """
 你是一个安全助手，需要根据提供的密码文档信息回答问题。请严格遵守以下规则：
