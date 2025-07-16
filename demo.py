@@ -35,41 +35,57 @@ def apply_custom_css():
             }
 
             /* 按钮样式 */
-            .feature-btn {
+            .stButton > button {
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: white !important;
+                border: none !important;
+                border-radius: 16px !important;
+                padding: 25px 15px !important;
+                box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
+                transition: all 0.3s ease !important;
+                height: 180px !important;
+                text-align: center;
+                width: 100% !important;
+            }
+
+            .stButton > button:hover {
+                transform: translateY(-5px) !important;
+                box-shadow: 0 10px 25px rgba(46, 139, 87, 0.25) !important;
+                background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%) !important;
+            }
+
+            .stButton > button > div {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                background: white;
-                border: none;
-                border-radius: 16px;
-                padding: 25px 15px;
-                box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-                transition: all 0.3s ease;
-                height: 180px;
+            }
+
+            .stButton > button > div > p {
+                font-size: 18px !important;
+                font-weight: 600 !important;
+                color: #2c7744 !important;
+                margin: 5px 0 !important;
                 text-align: center;
-                cursor: pointer;
-                width: 100%;
-                font-size: 24px;
             }
 
-            .feature-btn:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(46, 139, 87, 0.25);
-                background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+            .stButton > button > div > p:nth-child(1) {
+                font-size: 48px !important;
+                margin-bottom: 15px !important;
             }
 
-            .feature-btn .title {
-                font-size: 20px;
-                font-weight: 600;
-                color: #2c7744;
-                margin-top: 10px;
+            .stButton > button > div > p:nth-child(2) {
+                font-size: 20px !important;
+                margin-bottom: 8px !important;
             }
 
-            .feature-btn .desc {
-                font-size: 14px;
-                color: #5f7d95;
-                margin-top: 5px;
+            .stButton > button > div > p:nth-child(3) {
+                font-size: 14px !important;
+                color: #5f7d95 !important;
+                font-weight: normal !important;
             }
 
             /* 页脚样式 */
@@ -167,23 +183,25 @@ def show_home():
     # 创建功能按钮
     with col1:
         for feature in features[0::2]:  # 第一列：第1、3、5个按钮
-            if st.button(
-                    f"{feature['icon']}\n### {feature['title']}\n{feature['desc']}",
-                    key=f"btn_{feature['page']}",
-                    use_container_width=True
-            ):
+            button = st.button(
+                f"{feature['icon']}\n{feature['title']}\n{feature['desc']}",
+                key=f"btn_{feature['page']}",
+                use_container_width=True
+            )
+            if button:
                 st.session_state.page = feature['page']
-                st.experimental_rerun()
+                st.experimental_rerun()  # 修复：使用正确的重载方式
 
     with col2:
         for feature in features[1::2]:  # 第二列：第2、4、6个按钮
-            if st.button(
-                    f"{feature['icon']}\n### {feature['title']}\n{feature['desc']}",
-                    key=f"btn_{feature['page']}",
-                    use_container_width=True
-            ):
+            button = st.button(
+                f"{feature['icon']}\n{feature['title']}\n{feature['desc']}",
+                key=f"btn_{feature['page']}",
+                use_container_width=True
+            )
+            if button:
                 st.session_state.page = feature['page']
-                st.experimental_rerun()
+                st.experimental_rerun()  # 修复：使用正确的重载方式
 
     # 添加页脚
     st.markdown("""
