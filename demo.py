@@ -61,7 +61,7 @@ def main():
     if st.session_state.page == 'home':
         show_home()
     elif st.session_state.page == 'document_qa':
-        document_qa_page(config, logger)
+        document_qa_page(config)
     elif st.session_state.page == 'current_qa':
         current_qa_page()
     elif st.session_state.page == 'video':
