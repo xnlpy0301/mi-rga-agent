@@ -62,13 +62,20 @@ def apply_custom_css():
             }
             /* 隐藏实际按钮但保持功能 */
             .stButton button {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                left: 0;
-                top: 0;
-                opacity: 0;
-                z-index: 10;
+                background: white !important;
+                color: #2c7744 !important;
+                font-weight: 600 !important;
+                border-radius: 16px !important;
+                padding: 20px !important;
+                box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
+                transition: all 0.3s ease !important;
+                height: 100px !important;
+                font-size: 18px !important;
+            }
+            .stButton button:hover {
+                transform: translateY(-5px) !important;
+                box-shadow: 0 12px 30px rgba(46, 139, 87, 0.3) !important;
+                background: linear-gradient(135deg, #ffffff 0%, #e6fde6 100%) !important;
             }
 
             /* 按钮容器 */
@@ -128,24 +135,28 @@ def apply_custom_css():
     """, unsafe_allow_html=True)
 
 def display_custom_buttons(features):
-    # 使用Streamlit的原生交互组件
-    cols = st.columns(2)  # 创建两列布局
-    for idx, feature in enumerate(features):
-        with cols[idx % 2]:  # 每列交替放置按钮
-            # 创建一个容器，应用自定义样式
-            container = st.container()
-            # 在容器中添加样式化的按钮外观
-            container.markdown(f"""
-                <div class="custom-feature-button">
-                    <div class="icon">{feature['icon']}</div>
-                    <div class="title">{feature['title']}</div>
-                    <div class="desc">{feature['desc']}</div>
-                </div>
-            """, unsafe_allow_html=True)
-            # 添加一个透明的按钮覆盖在样式上，处理点击事件
-            if container.button("", key=f"btn_{feature['page']}"):
-                st.session_state.page = feature['page']
-                st.rerun()
+    # 使用网格布局
+    for i in range(0, len(features), 2):
+        cols = st.columns(2)
+        for j in range(2):
+            if i+j < len(features):
+                feature = features[i+j]
+                with cols[j]:
+                    # 创建一个带样式的容器
+                    with st.container():
+                        # 添加按钮 - 使用key确保唯一性
+                        if st.button(
+                            f"{feature['icon']} {feature['title']}",
+                            key=f"feature_{feature['page']}",
+                            use_container_width=True,
+                            help=feature['desc']
+                        ):
+                            st.session_state.page = feature['page']
+                            st.rerun()
+                        # 添加描述文本
+                        st.markdown(f"<div style='text-align:center;'>{feature['desc']}</div>",
+                                   unsafe_allow_html=True)
+
 
 
 
