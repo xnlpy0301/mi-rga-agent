@@ -84,7 +84,7 @@ class DocumentProcessor:
         except Exception as e:
             self.logger.error(f"文档处理失败: {str(e)}")
             raise
-# 重新实现使用FAISS的VectorStoreManager
+# 修改VectorStoreManager类
 class VectorStoreManager:
     def __init__(self, config, logger):
         self.config = config
@@ -94,7 +94,14 @@ class VectorStoreManager:
         self.index_path = f"faiss_index_{self.config.collection_name}"
         self._initialize_vector_store()
     def _create_embedding_function(self):
-        return HuggingFaceEmbeddings(model_name=self.config.embedding_model)
+        # 使用OpenAI嵌入模型替代HuggingFace模型
+        from langchain_openai import OpenAIEmbeddings
+        return OpenAIEmbeddings(
+            model="text-embedding-ada-002",
+            openai_api_key=self.config.llm_api_key,
+            openai_api_base=self.config.llm_base_url
+        )
+    # 其余方法保持不变
     def _initialize_vector_store(self):
         try:
             if os.path.exists(self.index_path):
@@ -150,6 +157,7 @@ class VectorStoreManager:
             "documents": [documents],
             "distances": [distances]
         }
+
 
 
 
