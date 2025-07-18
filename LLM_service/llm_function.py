@@ -21,7 +21,7 @@ class Config:
         self.collection_name = "accounts"
         self.max_results = 5
         self.distance_threshold = 0.25
-        self.llm_api_key = "sk-9711b868641243f1bd50983d7da7f3b1"
+        self.llm_api_key = ""
         self.llm_base_url = "https://api.deepseek.com"
         self.llm_model = "deepseek-chat"
 
